@@ -88,6 +88,8 @@ pub enum ScryptoType {
     I256,
     I384,
     I512,
+    D256,
+    D512,
 
     // resource,
     Bucket,
@@ -99,7 +101,7 @@ pub enum ScryptoType {
 }
 
 // Need to update `scrypto-derive/src/import.rs` after changing the table below
-const MAPPING: [(ScryptoType, u8, &str); 32] = [
+const MAPPING: [(ScryptoType, u8, &str); 34] = [
     (ScryptoType::PackageAddress, 0x80, "PackageAddress"), // 128
     (ScryptoType::ComponentAddress, 0x81, "ComponentAddress"), // 129
     (ScryptoType::Component, 0x82, "ComponentAddress"),    // 130
@@ -132,6 +134,8 @@ const MAPPING: [(ScryptoType, u8, &str); 32] = [
     (ScryptoType::I256, 0xc4, "I256"), // 196
     (ScryptoType::I384, 0xc5, "I384"), // 197
     (ScryptoType::I512, 0xc6, "I512"), // 198
+    (ScryptoType::D256, 0xb7, "D256"), // 183
+    (ScryptoType::D512, 0xb8, "D512"), // 184
 ];
 
 impl ScryptoType {

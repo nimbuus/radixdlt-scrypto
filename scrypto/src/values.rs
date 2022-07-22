@@ -253,6 +253,7 @@ pub struct ScryptoCustomValueChecker {
 pub enum ScryptoCustomValueCheckError {
     UnknownTypeId(u8),
     InvalidDecimal(ParseDecimalError),
+    InvalidLongDecimal(ParseLongDecimalError),
     InvalidU8(ParseU8Error),
     InvalidU16(ParseU16Error),
     InvalidU32(ParseU32Error),
@@ -350,9 +351,6 @@ impl CustomValueVisitor for ScryptoCustomValueChecker {
                 Ed25519Signature::try_from(data)
                     .map_err(ScryptoCustomValueCheckError::InvalidEd25519Signature)?;
             }
-            ScryptoType::Decimal => {
-                Decimal::try_from(data).map_err(ScryptoCustomValueCheckError::InvalidDecimal)?;
-            }
             ScryptoType::U8 => {
                 U8::try_from(data).map_err(ScryptoCustomValueCheckError::InvalidU8)?;
             }
@@ -400,6 +398,13 @@ impl CustomValueVisitor for ScryptoCustomValueChecker {
             }
             ScryptoType::I512 => {
                 I512::try_from(data).map_err(ScryptoCustomValueCheckError::InvalidI512)?;
+            }
+            ScryptoType::Decimal => {
+                Decimal::try_from(data).map_err(ScryptoCustomValueCheckError::InvalidDecimal)?;
+            }
+            ScryptoType::LongDecimal => {
+                LongDecimal::try_from(data)
+                    .map_err(ScryptoCustomValueCheckError::InvalidLongDecimal)?;
             }
             ScryptoType::Bucket => {
                 let bucket =
@@ -625,7 +630,6 @@ impl ScryptoValueFormatter {
         proof_ids: &HashMap<ProofId, String>,
     ) -> String {
         match ScryptoType::from_id(type_id).unwrap() {
-            ScryptoType::Decimal => format!("Decimal(\"{}\")", Decimal::try_from(data).unwrap()),
             ScryptoType::U8 => format!("U8(\"{}\")", U8::try_from(data).unwrap()),
             ScryptoType::U16 => format!("U16(\"{}\")", U16::try_from(data).unwrap()),
             ScryptoType::U32 => format!("U32(\"{}\")", U32::try_from(data).unwrap()),
@@ -642,6 +646,10 @@ impl ScryptoValueFormatter {
             ScryptoType::I256 => format!("I256(\"{}\")", I256::try_from(data).unwrap()),
             ScryptoType::I384 => format!("I384(\"{}\")", I384::try_from(data).unwrap()),
             ScryptoType::I512 => format!("I512(\"{}\")", I512::try_from(data).unwrap()),
+            ScryptoType::Decimal => format!("Decimal(\"{}\")", Decimal::try_from(data).unwrap()),
+            ScryptoType::LongDecimal => {
+                format!("LongDecimal(\"{}\")", LongDecimal::try_from(data).unwrap())
+            }
             ScryptoType::PackageAddress => {
                 format!(
                     "PackageAddress(\"{}\")",
